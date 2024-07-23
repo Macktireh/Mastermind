@@ -1,0 +1,20 @@
+[project]
+name = "Mastermind"
+version = "0.1.0"
+description = "Default template for PDM package"
+authors = [
+    {name = "Macktireh", email = "abdimack97@gmail.com"},
+]
+requires-python = "==3.12.*"
+readme = "README.md"
+license = {text = "MIT"}
+dependencies = [
+]
+
+
+[tool.pdm.scripts]
+start = "python main.py"
+
+
+[tool.pdm]
+distribution = false
