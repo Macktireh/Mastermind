@@ -48,15 +48,11 @@ class Mastermind:
     def fetch_translations(self) -> dict[str, str]:
         host = "raw.githubusercontent.com"
         path = "/Macktireh/mastermind/main/translations.json"
-
-        def _fetch(self) -> None:
-            conn = HTTPSConnection(host)
-            conn.request("GET", path)
-            response = conn.getresponse().read()
-            self.translations = json_loads(response.decode("utf-8"))
-            conn.close()
-
-        Thread(target=_fetch, args=(self,)).start()
+        conn = HTTPSConnection(host)
+        conn.request("GET", path)
+        response = conn.getresponse().read()
+        self.translations = json_loads(response.decode("utf-8"))
+        conn.close()
 
     def generate_secret_combination(self) -> list[str]:
         return [choice(list(COLORS.keys())) for _ in range(4)]
@@ -91,11 +87,11 @@ class Mastermind:
                 indicators = f"{trans['indicators_label']}: {red_indicators} {white_indicators}".strip()
                 print(f"{self.display_combination(list(guess))}  {indicators}\n")
                 if red == 4:
-                    print(f"✅ {COLORS['4'][1]}{trans['win_message']} {RESET}\n")
+                    print(f"✅  {COLORS['4'][1]}{trans['win_message']} {RESET}\n")
                     return True
                 turn += 1
             else:
-                print(f"❌ {COLORS['3'][1]}{trans['input_error']} {RESET}\n")
+                print(f"❌  {COLORS['3'][1]}{trans['input_error']} {RESET}\n")
         return False
 
     def play(self) -> None:
