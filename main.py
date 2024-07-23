@@ -55,7 +55,7 @@ class Mastermind:
         conn.close()
 
     def generate_secret_combination(self) -> list[str]:
-        return [choice(list(COLORS.keys())) for _ in range(4)]
+        return [choice(list(COLORS)) for _ in range(4)]
 
     def display_combination(self, combination: list[str], symbol: str = SQUARE, separator: str = " ") -> str:
         return separator.join(f"{COLORS[c][1]}{symbol}{RESET}" for c in combination)
@@ -82,8 +82,8 @@ class Mastermind:
             guess = input(trans["input_prompt"].format(turn=turn, max_turns=self.max_turns)).strip()
             if len(guess) == 4 and set(guess).issubset(COLORS):
                 red, white = self.check_combination(guess)
-                red_indicators = self.display_combination(["3"] * red, symbol=DOT, separator=" ")
-                white_indicators = self.display_combination(["5"] * white, symbol=DOT, separator=" ")
+                red_indicators = self.display_combination(["3"] * red, symbol=DOT)
+                white_indicators = self.display_combination(["5"] * white, symbol=DOT)
                 indicators = f"{trans['indicators_label']}: {red_indicators} {white_indicators}".strip()
                 print(f"{self.display_combination(list(guess))}  {indicators}\n")
                 if red == 4:
@@ -97,7 +97,7 @@ class Mastermind:
     def play(self) -> None:
         self.print_instructions()
         if not self.play_round():
-            print(f"{self.translations[self.language]['lose_message']}{self.display_combination(self.secret_combination)}")
+            print(f"{self.translations[self.language]['lose_message']}{self.display_combination(self.secret_combination)}\n")
 
 
 if __name__ == "__main__":
