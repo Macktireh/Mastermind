@@ -28,24 +28,25 @@ class Language(StrEnum):
 
     @classmethod
     def to_dict(cls) -> dict[str, str]:
-        return {str(i + 1): lang.value for i, lang in enumerate(cls)}
+        return {str(i): lang.value for i, lang in enumerate(cls, 1)}
 
 
 class Mastermind:
     def __init__(self, max_turns: int = 10) -> None:
-        self.max_turns = max_turns
         Thread(target=self.fetch_translations, args=()).start()
+        self.max_turns = max_turns
         self.language = self.choose_language()
         self.secret_combination = self.generate_secret_combination()
 
-    def choose_language(self) -> str:
+    @staticmethod
+    def choose_language() -> str:
         print("\nChoose your language / Choisissez votre langue / Elige tu idioma / 言語を選択してください / Scegli la tua lingua / Wähle deine Sprache")
         print("[1] English\n[2] Français\n[3] Español\n[4] 日本語\n[5] Italiano\n[6] Deutsch")
         choice = input("\nEnter the number / Entrez le numéro / Ingrese el número / 数字を入力してください / Inserisci il numero / Gib die Zahl ein: ").strip()
         languages = Language.to_dict()
         return languages.get(choice, "en")
 
-    def fetch_translations(self) -> dict[str, str]:
+    def fetch_translations(self) -> None:
         host = "raw.githubusercontent.com"
         path = "/Macktireh/mastermind/main/translations.json"
         conn = HTTPSConnection(host)
@@ -54,11 +55,13 @@ class Mastermind:
         self.translations = json_loads(response.decode("utf-8"))
         conn.close()
 
-    def generate_secret_combination(self) -> list[str]:
+    @staticmethod
+    def generate_secret_combination() -> list[str]:
         return [choice(list(COLORS)) for _ in range(4)]
 
-    def display_combination(self, combination: list[str], symbol: str = SQUARE, separator: str = " ") -> str:
-        return separator.join(f"{COLORS[c][1]}{symbol}{RESET}" for c in combination)
+    @staticmethod
+    def display_combination(combination: list[str], symbol: str = SQUARE) -> str:
+        return " ".join(f"{COLORS[c][1]}{symbol}{RESET}" for c in combination)
 
     def check_combination(self, guess: str) -> tuple[int, int]:
         red = sum(1 for s, g in zip(self.secret_combination, guess, strict=False) if s == g)
@@ -68,10 +71,9 @@ class Mastermind:
     def print_instructions(self) -> None:
         lang = self.language
         trans = self.translations[lang]
-        instructions = f"\n\n{'='*100}\n{' '*5}{trans['game_title']}{' '*10}\n{'='*100}\n\n{''.join(trans['instructions'])}"
-        color_options = trans["color_options"] + " ".join(
-            f"{COLORS[key][1]}[{key}]: {COLORS[key][0][lang]}{RESET}" for key in COLORS
-        )
+        _divider = "=" * 100
+        instructions = f"\n\n{_divider}\n     {trans['game_title']}\n{_divider}\n\n{''.join(trans['instructions'])}"
+        color_options = trans["color_options"] + " ".join(f"{_ansi}[{key}]: {_color[lang]}{RESET}" for key, (_color, _ansi) in COLORS.items())
         print(instructions + color_options + "\n")
 
     def play_round(self) -> bool:
