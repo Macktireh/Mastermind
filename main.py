@@ -84,9 +84,8 @@ class Mastermind:
             guess = input(trans["input_prompt"].format(turn=turn, max_turns=self.max_turns)).strip()
             if len(guess) == 4 and set(guess).issubset(COLORS):
                 red, white = self.check_combination(guess)
-                red_indicators = self.display_combination(["3"] * red, symbol=DOT)
-                white_indicators = self.display_combination(["5"] * white, symbol=DOT)
-                indicators = f"{trans['indicators_label']}: {red_indicators} {white_indicators}".strip()
+                _indicators = self.display_combination(["3"] * red + ["5"] * white, symbol=DOT)
+                indicators = f"{trans['indicators_label']}: {_indicators}".strip()
                 print(f"{self.display_combination(list(guess))}  {indicators}\n")
                 if red == 4:
                     print(f"✅  {COLORS['4'][1]}{trans['win_message']} {RESET}\n")
